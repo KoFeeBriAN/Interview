@@ -42,15 +42,18 @@ export default () => {
     const { name, email, phone, male } = formData;
     let errors = [];
 
-    if (!v.validateName(name.trim())) errors.push('Invalid Name');
+    if (!v.validateName(name.trim()))
+      errors.push('Invalid Name: Name length must no more than 255 characters');
     if (!v.validateEmail(email.trim().toLowerCase()))
-      errors.push('Invalid Email');
-    if (!v.validatePhone(phone.trim())) errors.push('Invalid Phone');
-    if (!v.validateMale(male.trim())) errors.push('Invalid Male');
+      errors.push('Invalid Email: Please Use Appropriate Email');
+    if (!v.validatePhone(phone.trim()))
+      errors.push('Invalid Phone: must be format 0xx-xxx-xxxx');
+    if (!v.validateMale(male.trim()))
+      errors.push('Invalid Male: Must be either "male" or "female"');
 
     if (errors.length !== 0)
       return dispatch({
-        payload: { ...formData, errorMessage: errors.join(', ') }
+        payload: { ...formData, errorMessage: errors }
       });
     else {
       submitAPI({ name, email, phone, male });
@@ -71,7 +74,8 @@ export default () => {
   return (
     <div className='App'>
       <h1 id='error' style={{ color: 'red' }}>
-        {formData.errorMessage}
+        {formData.errorMessage !== '' &&
+          formData.errorMessage.map((msg, idx) => <p key={idx}>{msg}</p>)}
       </h1>
       <Input
         name='name'
